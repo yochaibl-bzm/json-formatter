@@ -15,7 +15,7 @@ body {
   right: 17px ;
 }
 
-#buttonFormatted, #buttonPlain {
+#buttonCrud, #buttonFormatted, #buttonPlain {
   -webkit-border-radius: 2px;
   -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
   -webkit-user-select: none;
@@ -34,11 +34,18 @@ body {
   text-shadow: 1px 1px rgba(255,255,255,0.3) ;
 }
 
+#buttonCrud {
+  margin-left: 0 ;
+  border-top-left-radius: 0 ;
+  border-bottom-left-radius: 0 ;
+}
+
 #buttonFormatted {
   margin-left: 0 ;
   border-top-left-radius: 0 ;
   border-bottom-left-radius: 0 ;
 }
+
 #buttonPlain {
   margin-right: 0 ;
   border-top-right-radius: 0 ;
