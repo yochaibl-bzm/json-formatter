@@ -220,10 +220,14 @@ var doc = 8;
       } ;
 
     var links = {
-        'userId': '{{protocol}}//{{host}}/api/latest/users/{{value}}'
+        'userId': '{{protocol}}//{{host}}/api/latest/users/{{value}}',
+        'testId': '{{protocol}}//{{host}}/api/latest/tests/{{value}}',
+        'sessionId': '{{protocol}}//{{host}}/api/latest/sessions/{{value}}',
+        'sessions': '{{protocol}}//{{host}}/api/latest/sessions/{{value}}',
+        'masterId': '{{protocol}}//{{host}}/api/latest/masters/{{value}}'
     };
 
-    function getLink(key, value, location){
+    function getLinkHref(key, value, location){
         var pathTemplate = links[key];
         if (!pathTemplate){
             return null;
@@ -239,6 +243,15 @@ var doc = 8;
         });
     }
 
+    function wrapLink(valueElement, keyName, value, options){
+        var link = getLinkHref(keyName, value, options.location);
+        if (!link){
+            return valueElement;
+        }
+
+        return makeLinkDom(valueElement, link);
+    }
+
   // Core recursive DOM-building function
     function getKvovDOM(value, keyName, options) {
       var type,
@@ -249,6 +262,8 @@ var doc = 8;
           keySpan,
           valueElement
       ;
+
+      options.key = keyName || options.key;
 
       // Establish value type
         if (typeof value === 'string')
@@ -329,14 +344,7 @@ var doc = 8;
               valueElement = templates.t_number.cloneNode(false) ;
               valueElement.innerText = value ;
 
-              var elementToAdd;
-              var link = getLink(keyName, value, options.location);
-              if (link){
-                  elementToAdd = makeLinkDom(valueElement, link);
-              } else {
-                  elementToAdd = valueElement;
-              }
-              kvov.appendChild(elementToAdd);
+              kvov.appendChild(wrapLink(valueElement, options.key, value, options));
             break ;
 
           case TYPE_OBJECT:
