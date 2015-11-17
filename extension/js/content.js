@@ -188,8 +188,7 @@ var TabManager = (function(items){
                 if (isButtonSelected(this)) {
                     return;
                 }
-                pre.hidden = true ;
-                jfContent.hidden = false ;
+                tabManager.show('crud');
 
                 buttonFormatted.classList.add('selected') ;
                 buttonPlain.classList.remove('selected') ;
