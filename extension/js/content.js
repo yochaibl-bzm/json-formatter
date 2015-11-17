@@ -252,7 +252,8 @@
             port.postMessage({
               type: "SENDING TEXT",
               text: pre.innerText,
-              length: jsonLength
+              length: jsonLength,
+              location: document.location
             });
         
           // Now, this script will just wait to receive anything back via another port message. The returned message will be something like "NOT JSON" or "IS JSON"

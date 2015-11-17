@@ -33,6 +33,24 @@
 /*jshint eqeqeq:true, forin:true, strict:true */
 /*global chrome, console */
 
+var Template = (function(){
+
+    function make(template, values){
+        var str = template;
+        for(var key in values){
+            var regexp = new RegExp('{{' + key + '}}', 'g');
+            str = str.replace(regexp, values[key]);
+        }
+        return str;
+    }
+
+    return {
+        make: make
+    };
+})();
+
+var doc = 8;
+
 (function () {
   
   "use strict" ;
@@ -137,6 +155,13 @@
       return idx ;
     }
 
+    function makeLinkDom(childElement, target){
+        var linkElement = document.createElement('A') ;
+        linkElement.href = target;
+        linkElement.appendChild(childElement);
+        return linkElement;
+    }
+
     // function spin(seconds) {
     //   // spin - Hog the CPU for the specified number of seconds
     //   // (for simulating long processing times in development)
@@ -194,8 +219,28 @@
         t_dblqText: document.createTextNode('"')
       } ;
 
+    var links = {
+        'userId': '{{protocol}}//{{host}}/api/latest/users/{{value}}'
+    };
+
+    function getLink(key, value, location){
+        var pathTemplate = links[key];
+        if (!pathTemplate){
+            return null;
+        }
+
+        return Template.make(pathTemplate, {
+            protocol: location.protocol,
+            host: location.host,
+            value: value,
+            key: key,
+            url: location.href,
+            port: location.port
+        });
+    }
+
   // Core recursive DOM-building function
-    function getKvovDOM(value, keyName) {
+    function getKvovDOM(value, keyName, options) {
       var type,
           kvov,
           nonZeroSize,
@@ -220,8 +265,8 @@
           type = TYPE_OBJECT ;
 
       // Root node for this kvov
-        kvov = templates.t_kvov.cloneNode(false) ;
-      
+        kvov = templates.t_kvov.cloneNode(false);
+
       // Add an 'expander' first (if this is object/array with non-zero size)
         if (type === TYPE_OBJECT || type === TYPE_ARRAY) {
           nonZeroSize = false ;
@@ -283,9 +328,17 @@
             // Simply add a number element (span.n)
               valueElement = templates.t_number.cloneNode(false) ;
               valueElement.innerText = value ;
-              kvov.appendChild(valueElement) ;
+
+              var elementToAdd;
+              var link = getLink(keyName, value, options.location);
+              if (link){
+                  elementToAdd = makeLinkDom(valueElement, link);
+              } else {
+                  elementToAdd = valueElement;
+              }
+              kvov.appendChild(elementToAdd);
             break ;
-          
+
           case TYPE_OBJECT:
             // Add opening brace
               kvov.appendChild( templates.t_oBrace.cloneNode(true) ) ;
@@ -300,7 +353,7 @@
                   for (k in value) {
                     if (value.hasOwnProperty(k)) {
                       count++ ;
-                      childKvov =  getKvovDOM(value[k], k) ;
+                      childKvov =  getKvovDOM(value[k], k, options) ;
                       // Add comma
                         comma = templates.t_commaText.cloneNode() ;
                         childKvov.appendChild(comma) ;
@@ -329,7 +382,7 @@
                 // For each key/value pair, add the markup
                   for (var i=0, length=value.length, lastIndex=length-1; i<length; i++) {
                     // Make a new kvov, with no key
-                      childKvov = getKvovDOM(value[i], false) ;
+                      childKvov = getKvovDOM(value[i], false, options) ;
                     // Add comma if not last one
                       if (i < lastIndex)
                         childKvov.appendChild( templates.t_commaText.cloneNode() ) ;
@@ -362,12 +415,11 @@
 
 
   // Function to convert object to an HTML string
-    function jsonObjToHTML(obj, jsonpFunctionName) {
-
+    function jsonObjToHTML(obj, jsonpFunctionName, location) {
       // spin(5) ;
 
       // Format object (using recursive kvov builder)
-        var rootKvov = getKvovDOM(obj, false) ;
+        var rootKvov = getKvovDOM(obj, false, {location: location}) ;
 
       // The whole DOM is now built.
 
@@ -487,7 +539,7 @@
               port.postMessage(['FORMATTING' /*, JSON.stringify(localStorage)*/]) ;
 
             // Do formatting
-              var html = jsonObjToHTML(obj, jsonpFunctionName) ;
+              var html = jsonObjToHTML(obj, jsonpFunctionName, msg.location) ;
 
             // Post the HTML string to the content script
               port.postMessage(['FORMATTED', html, validJsonText]) ;
