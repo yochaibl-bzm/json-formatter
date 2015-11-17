@@ -59,6 +59,7 @@ body {
   color: #222;
 }
 
+#buttonCrud:active,
 #buttonFormatted:active,
 #buttonPlain:active {
   -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.2);
@@ -66,6 +67,7 @@ body {
   color: #333;
 }
 
+#buttonCrud.selected,
 #buttonFormatted.selected,
 #buttonPlain.selected {
   -webkit-box-shadow: inset 0px 1px 5px rgba(0, 0, 0, 0.2);
@@ -73,6 +75,7 @@ body {
   color: #333;
 }
 
+#buttonCrud:focus,
 #buttonFormatted:focus,
 #buttonPlain:focus {
   outline: 0;
@@ -238,4 +241,26 @@ span {
 
 * {
   -webkit-font-smoothing: antialiased;
+}
+
+.crud-form{
+  padding:10px;
+
+  .path-box{
+    height:40px;
+    width: 800px;
+    display:block;
+    border-radius: 7px;
+    padding-left: 8px;
+    font-size:16px;
+  }
+
+  .data-box{
+    border-radius: 7px;
+    display:block;
+    margin-top:10px;
+    width:800px;
+    height: 600px;
+    font-size:13px;
+  }
 }
