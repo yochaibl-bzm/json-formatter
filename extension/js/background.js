@@ -53,7 +53,11 @@ var RulesChecker = function(rules, location){
     var filteredRules = getRules();
 
     function getRules(){
-        return _(rules).filter(checkRule).reduce(mergeRules, {linksRules:{}});
+        var filtered = _(rules).filter(checkRule).reduce(mergeRules, {linksRules:{}});
+        return _.defaults(filtered, {
+            byKey: {},
+            byKeyPath: {}
+        });
     }
 
     function mergeRules(merged, current){
