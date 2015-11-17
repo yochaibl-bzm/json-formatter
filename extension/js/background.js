@@ -336,7 +336,7 @@ var doc = 8;
               valueElement.appendChild(templates.t_dblqText.cloneNode(false)) ;
               valueElement.appendChild(innerStringEl) ;
               valueElement.appendChild(templates.t_dblqText.cloneNode(false)) ;
-              kvov.appendChild(valueElement) ;
+              kvov.appendChild(wrapLink(valueElement, options.key, value, options));
             break ;
           
           case TYPE_NUMBER:
