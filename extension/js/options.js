@@ -6,6 +6,9 @@
 
     function save(){
         localStorage['options'] = $('#options').val();
+        chrome.extension.sendMessage({
+            type: "RELOAD-OPTIONS"
+        });
     }
 
     function loadOptions(){

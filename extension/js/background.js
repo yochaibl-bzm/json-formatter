@@ -49,7 +49,66 @@ var Template = (function(){
     };
 })();
 
-var doc = 8;
+var RulesChecker = function(rules, location){
+    var filteredRules = getRules();
+
+    function getRules(){
+        return _(rules).filter(checkRule).reduce(mergeRules, {linksRules:{}});
+    }
+
+    function mergeRules(merged, current){
+        return {
+            byKey: _.defaults({}, merged.linksRules.byKey, current.linksRules.byKey),
+            byKeyPath: _.defaults({}, merged.linksRules.byKeyPath, current.linksRules.byKeyPath)
+        };
+    }
+
+    function checkRule(rule){
+        return _.some(rule.filter, checkFilter);
+    }
+
+    function checkFilter(filter){
+        switch (filter.check){
+            case 'exactly':
+                return location[filter.parameter] === filter.value;
+            case 'containing':
+                return location[filter.parameter].indexOf(filter.value) > -1;
+            case 'regex':
+                var regexp = new RegExp(filter.value);
+                return regexp.test(location[filter.parameter]);
+            default:
+                return false;
+        }
+    }
+
+    function removeDotPrefix(keyPath){
+        if (typeof keyPath !== 'string' || keyPath.length === 0){
+            return keyPath;
+        }
+
+        return keyPath.replace(/^\./, '');
+    }
+
+    function getLinkHref(keyPath, key, value){
+        var pathTemplate = filteredRules.byKeyPath[removeDotPrefix(keyPath)] || filteredRules.byKey[key];
+        if (!pathTemplate){
+            return null;
+        }
+
+        return Template.make(pathTemplate, {
+            protocol: location.protocol,
+            host: location.host,
+            value: value,
+            key: key,
+            url: location.href,
+            port: location.port
+        });
+    }
+
+    return {
+        getLinkHref: getLinkHref
+    };
+};
 
 (function () {
   
@@ -219,32 +278,10 @@ var doc = 8;
         t_dblqText: document.createTextNode('"')
       } ;
 
-    var links = {
-        'userId': '{{protocol}}//{{host}}/api/latest/users/{{value}}',
-        'testId': '{{protocol}}//{{host}}/api/latest/tests/{{value}}',
-        'sessionId': '{{protocol}}//{{host}}/api/latest/sessions/{{value}}',
-        'sessions': '{{protocol}}//{{host}}/api/latest/sessions/{{value}}',
-        'masterId': '{{protocol}}//{{host}}/api/latest/masters/{{value}}'
-    };
+    var rules = $.parseJSON(localStorage['options'] || []);
 
-    function getLinkHref(key, value, location){
-        var pathTemplate = links[key];
-        if (!pathTemplate){
-            return null;
-        }
-
-        return Template.make(pathTemplate, {
-            protocol: location.protocol,
-            host: location.host,
-            value: value,
-            key: key,
-            url: location.href,
-            port: location.port
-        });
-    }
-
-    function wrapLink(valueElement, keyName, value, options){
-        var link = getLinkHref(keyName, value, options.location);
+    function wrapLink(valueElement, keyPath, keyName, value, options){
+        var link = options.rulesChecker.getLinkHref(keyPath, keyName, value);
         if (!link){
             return valueElement;
         }
@@ -253,7 +290,8 @@ var doc = 8;
     }
 
   // Core recursive DOM-building function
-    function getKvovDOM(value, keyName, options) {
+    function getKvovDOM(value, keyName, _options) {
+      var options = _.clone(_options);
       var type,
           kvov,
           nonZeroSize,
@@ -263,6 +301,7 @@ var doc = 8;
           valueElement
       ;
 
+      options.keyPath += keyName ? '.' + keyName : '';
       options.key = keyName || options.key;
 
       // Establish value type
@@ -336,7 +375,7 @@ var doc = 8;
               valueElement.appendChild(templates.t_dblqText.cloneNode(false)) ;
               valueElement.appendChild(innerStringEl) ;
               valueElement.appendChild(templates.t_dblqText.cloneNode(false)) ;
-              kvov.appendChild(wrapLink(valueElement, options.key, value, options));
+              kvov.appendChild(wrapLink(valueElement, options.keyPath, options.key, value, options));
             break ;
           
           case TYPE_NUMBER:
@@ -344,7 +383,7 @@ var doc = 8;
               valueElement = templates.t_number.cloneNode(false) ;
               valueElement.innerText = value ;
 
-              kvov.appendChild(wrapLink(valueElement, options.key, value, options));
+              kvov.appendChild(wrapLink(valueElement, options.keyPath, options.key, value, options));
             break ;
 
           case TYPE_OBJECT:
@@ -418,16 +457,17 @@ var doc = 8;
 
       return kvov ;
     }
-  
-
-
 
   // Function to convert object to an HTML string
     function jsonObjToHTML(obj, jsonpFunctionName, location) {
       // spin(5) ;
 
       // Format object (using recursive kvov builder)
-        var rootKvov = getKvovDOM(obj, false, {location: location}) ;
+        var rootKvov = getKvovDOM(obj, false, {
+            location: location,
+            keyPath: '',
+            rulesChecker: RulesChecker(rules, location)
+        }) ;
 
       // The whole DOM is now built.
 

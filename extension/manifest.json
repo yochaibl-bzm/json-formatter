@@ -10,7 +10,7 @@
        "32": "icons/32.png"
   },
   "background": {
-    "scripts": ["js/background.js"]
+    "scripts": ["js/jquery-1.11.3.js", "js/underscore.js", "js/background.js"]
   },
   "content_scripts": [
     { "matches": ["<all_urls>"], "js": ["js/content.js"], "run_at": "document_start" }
