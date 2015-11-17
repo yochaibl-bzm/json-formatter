@@ -1,0 +1,12 @@
+
+label{
+    display: block;
+    font-weight:bold;
+}
+
+textarea{
+    display: block;
+    width: 600px;
+    height: 600px;
+}
+

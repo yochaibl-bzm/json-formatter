@@ -1,22 +1,15 @@
 <!doctype html>
 <html>
-<head><title>Formatter settings</title></head>
+<head>
+    <title>Formatter settings</title>
+    <link rel="stylesheet" type="text/css" href="css/options.css">
+</head>
 <body>
-<div class="boxes">
-    <input type="checkbox" id="debug"/>
-    <label for="debug"><span></span>Enable Debug mode</label>
-    <br/>
-    <input type="checkbox" id="custom_server_url"/>
-    <label for="custom_server_url"><span></span>Custom Server URL</label>
-    <br/></div>
-<div class="server_url" style="display: none;">
-    <label for="server"><span></span>Server URL</label>
-    <input size=50 value="https://a.blazemeter.com"
-           type="text" id="server"/></div>
-<br/>
-<button id="save">Save</button>
+<label for='options'>Options:</label>
+<textarea id='options'></textarea>
 
+<button id="save">Save</button>
 </body>
-<script src="js/jquery-2.0.3.js"></script>
+<script src="js/jquery-1.11.3.js"></script>
 <script src="js/options.js"></script>
 </html>
