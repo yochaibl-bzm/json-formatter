@@ -49,7 +49,8 @@ var Template = (function(){
     };
 })();
 
-var RulesChecker = function(rules, location){
+var RulesChecker = function(rules, data){
+    var location = data.location;
     var filteredRules = getRules();
 
     function getRules(){
@@ -463,14 +464,13 @@ var RulesChecker = function(rules, location){
     }
 
   // Function to convert object to an HTML string
-    function jsonObjToHTML(obj, jsonpFunctionName, location) {
+    function jsonObjToHTML(obj, jsonpFunctionName, data) {
       // spin(5) ;
 
       // Format object (using recursive kvov builder)
         var rootKvov = getKvovDOM(obj, false, {
-            location: location,
             keyPath: '',
-            rulesChecker: RulesChecker(rules, location)
+            rulesChecker: RulesChecker(rules, data)
         }) ;
 
       // The whole DOM is now built.
@@ -591,7 +591,7 @@ var RulesChecker = function(rules, location){
               port.postMessage(['FORMATTING' /*, JSON.stringify(localStorage)*/]) ;
 
             // Do formatting
-              var html = jsonObjToHTML(obj, jsonpFunctionName, msg.location) ;
+              var html = jsonObjToHTML(obj, jsonpFunctionName, {location: msg.location, json: obj}) ;
 
             // Post the HTML string to the content script
               port.postMessage(['FORMATTED', html, validJsonText]) ;
