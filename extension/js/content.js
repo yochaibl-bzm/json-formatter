@@ -33,6 +33,20 @@
 /*jshint eqeqeq:true, forin:true, strict:true */
 /*global chrome, console */
 
+var TabManager = (function(items){
+
+    function showTab(id){
+        for (key in items){
+            items[key].hidden = key !== id;
+        }
+    }
+
+    return {
+        show: showTab
+    }
+});
+
+
 (function() {
 
   "use strict" ;
@@ -132,40 +146,57 @@
             buttonFormatted.id = 'buttonFormatted' ;
             buttonFormatted.innerText = 'Parsed' ;
             buttonFormatted.classList.add('selected') ;
-            
-            var plainOn = false ;
+
+            var tabManager = TabManager({
+                raw: pre,
+                formatted: jfContent,
+                crud: {}
+            });
+
             buttonPlain.addEventListener(
               'click',
-              function () {
-                // When plain button clicked...
-                if (!plainOn) {
-                  plainOn = true ;
-                  pre.hidden = false ;
-                  jfContent.hidden = true ;
+              function (){
+                  // When plain button clicked...
+                  if (isButtonSelected(this)) {
+                      return;
+                  }
+                  tabManager.show('raw');
 
                   buttonFormatted.classList.remove('selected') ;
                   buttonPlain.classList.add('selected') ;
-                }
               },
               false
             ) ;
             
             buttonFormatted.addEventListener(
               'click',
-              function () {
-                // When formatted button clicked...
-                if (plainOn) {
-                  plainOn = false ;
-                  pre.hidden = true ;
-                  jfContent.hidden = false ;
-
-                  buttonFormatted.classList.add('selected') ;
-                  buttonPlain.classList.remove('selected') ;
+              function (){
+                if (isButtonSelected(this)) {
+                    return;
                 }
+                  tabManager.show('formatted');
+
+                buttonFormatted.classList.add('selected') ;
+                buttonPlain.classList.remove('selected') ;
               },
               false
             ) ;
             
+            buttonCrud.addEventListener(
+              'click',
+              function (){
+                if (isButtonSelected(this)) {
+                    return;
+                }
+                pre.hidden = true ;
+                jfContent.hidden = false ;
+
+                buttonFormatted.classList.add('selected') ;
+                buttonPlain.classList.remove('selected') ;
+              },
+              false
+            ) ;
+
             // Put it in optionBar
               optionBar.appendChild(buttonCrud) ;
               optionBar.appendChild(buttonPlain) ;
@@ -213,6 +244,9 @@
   
     // console.timeEnd('established port') ;
 
+  function isButtonSelected(button){
+      return button.className.indexOf('selected') > -1;
+  }
 
   function ready () {
     
