@@ -33,6 +33,20 @@
 /*jshint eqeqeq:true, forin:true, strict:true */
 /*global chrome, console */
 
+// Source: http://stackoverflow.com/questions/6990729/simple-ajax-form-using-javascript-no-jquery
+function ajaxPost (url, method, data, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.open(method, url);
+    xhr.setRequestHeader("Content-type", "application/json");
+
+    //.bind ensures that this inside of the function is the XHR object.
+    xhr.onload = callback.bind(xhr);
+
+    //All preperations are clear, send the request!
+    xhr.send(data);
+}
+
 var TabManager = (function(items){
 
     function setSelected(item, isSelected){
@@ -78,11 +92,11 @@ var CrudPanel = function(){
         return select;
     }
 
-    function prepareRequest(){
-        panel.action = pathBox.value;
-        panel.enctype = 'application/json';
-        panel.method = methodBox.value.toLowerCase();
-        panel.source = dataBox.value;
+    function sendRequest(){
+        ajaxPost(pathBox.value, methodBox.value, dataBox.value, function(status){
+            debugger;
+            console.log ('response', status.target.responseText);
+        });
     }
 
     function createOption(method){
@@ -93,9 +107,8 @@ var CrudPanel = function(){
     }
 
     function generateDom(){
-        panel = document.createElement('form');
+        panel = document.createElement('div');
         panel.className = 'crud-form';
-        panel.onsubmit = prepareRequest;
         panel.hidden = true;
 
         pathBox = document.createElement('input');
@@ -107,11 +120,9 @@ var CrudPanel = function(){
         methodBox = generateMethodsSelect();
 
         submitButton = document.createElement('button');
-        // submitButton.type = 'submit';
         submitButton.innerHTML = 'Send';
         submitButton.className = 'submit-button';
-        submitButton.onsubmit = prepareRequest;
-        submitButton.onclick = prepareRequest;
+        submitButton.onclick = sendRequest;
 
         panel.appendChild(pathBox);
         panel.appendChild(dataBox);
@@ -128,8 +139,8 @@ var CrudPanel = function(){
         return JSON.stringify(JSON.parse(json), null, '\t');
     }
 
-    function init(json){
-        if (isInitialized){
+    function init(json, force){
+        if (isInitialized && !force){
             return;
         }
 
