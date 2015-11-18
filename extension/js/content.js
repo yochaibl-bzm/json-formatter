@@ -312,7 +312,7 @@ var contentManager = (function() {
         jfContent.innerHTML = html ;
         pre.innerText = json;
 
-        displayedFormattedJsonTime = Date.now() ;
+        displayedFormattedJsonTime = Date.now();
 
         // Export parsed JSON for easy access in console
         setTimeout(function () {
