@@ -586,13 +586,14 @@ var RulesChecker = function(rules, data){
                 port.disconnect() ;
                 return ;
               }
-
+            alert ('sending formattING');
             // And send it the message to confirm that we're now formatting (so it can show a spinner)
               port.postMessage(['FORMATTING' /*, JSON.stringify(localStorage)*/]) ;
 
+            alert ('jsonObjToHTML...');
             // Do formatting
               var html = jsonObjToHTML(obj, jsonpFunctionName, {location: msg.location, json: obj}) ;
-
+            alert (validJsonText);
             // Post the HTML string to the content script
               port.postMessage(['FORMATTED', html, validJsonText]) ;
 
