@@ -94,6 +94,7 @@ var CrudPanel = function(){
     function sendRequest(){
         ajaxRequest(pathBox.value, methodBox.value, dataBox.value, function(status){
             contentManager.createNewPort();
+            contentManager.initPort();
             contentManager.postText(status.target.responseText);
             console.log ('response', status.target.responseText);
         });
@@ -172,52 +173,57 @@ var contentManager = (function() {
       displayedFormattedJsonTime
   ;
 
-    port = createPort();
-    
-    port.onMessage.addListener( function (msg) {
+    function initPort(){
+        port = createPort();
 
-      switch (msg[0]) {
-        case 'NOT JSON' :
-          pre.hidden = false ;
-          document.body.removeChild(jfContent) ;
-          exitedNotJsonTime = +(new Date()) ;
-          break ;
-          
-        case 'FORMATTING' :
-          isJsonTime = +(new Date()) ;
+        port.onMessage.addListener( function (msg) {
 
-            clearTimeout(slowAnalysisTimeout) ;
-          
-            jfStyleEl = document.createElement('style') ;
-            jfStyleEl.id = 'jfStyleEl' ;
-            document.head.appendChild(jfStyleEl) ;
+            switch (msg[0]) {
+                case 'NOT JSON' :
+                    pre.hidden = false ;
+                    document.body.removeChild(jfContent) ;
+                    exitedNotJsonTime = +(new Date()) ;
+                    break ;
 
-            jfContent.innerHTML = '<p id="formattingMsg"><svg id="spinner" width="16" height="16" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" version="1.1"><path d="M 150,0 a 150,150 0 0,1 106.066,256.066 l -35.355,-35.355 a -100,-100 0 0,0 -70.711,-170.711 z" fill="#3d7fe6"></path></svg> Formatting...</p>' ;
+                case 'FORMATTING' :
+                    isJsonTime = +(new Date()) ;
 
+                    clearTimeout(slowAnalysisTimeout) ;
 
-            var formattingMsg = document.getElementById('formattingMsg') ;
-            // TODO: set formattingMsg to visible after about 300ms (so faster than this doesn't require it)
-            formattingMsg.hidden = true ;
-            setTimeout(function(){
-              formattingMsg.hidden = false ;
-            }, 250) ;
+                    addStyle();
 
-            createInterface();
-          break ;
+                    var formattingMsg = document.getElementById('formattingMsg') ;
+                    // TODO: set formattingMsg to visible after about 300ms (so faster than this doesn't require it)
+                    formattingMsg.hidden = true ;
+                    setTimeout(function(){
+                        formattingMsg.hidden = false ;
+                    }, 250) ;
 
-        case 'FORMATTED' :
-            console.log ('formatteddddd')
-          showFormatted(jfContent, msg[1], msg[2]);
-          // Insert HTML content
+                    createInterface();
+                    break ;
 
-          break ;
-        
-        default :
-          throw new Error('Message not understood: ' + msg[0]) ;
-      }
-    });
-  
+                case 'FORMATTED' :
+                    console.log ('formatteddddd');
+                    showFormatted(jfContent, msg[1], msg[2]);
+                    // Insert HTML content
+
+                    break ;
+
+                default :
+                    throw new Error('Message not understood: ' + msg[0]) ;
+            }
+        });
+    }
+
     // console.timeEnd('established port') ;
+
+    function addStyle(){
+        jfStyleEl = document.createElement('style') ;
+        jfStyleEl.id = 'jfStyleEl' ;
+        document.head.appendChild(jfStyleEl) ;
+
+        jfContent.innerHTML = '<p id="formattingMsg"><svg id="spinner" width="16" height="16" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" version="1.1"><path d="M 150,0 a 150,150 0 0,1 106.066,256.066 l -35.355,-35.355 a -100,-100 0 0,0 -70.711,-170.711 z" fill="#3d7fe6"></path></svg> Formatting...</p>' ;
+    }
 
     function createInterface(){
         var optionBar = document.createElement('div') ;
@@ -519,9 +525,12 @@ var contentManager = (function() {
         port = createPort();
     }
 
+    initPort();
+
     return {
         createNewPort: createNewPort,
-        postText: postText
+        postText: postText,
+        initPort: initPort
     };
 
 })();
