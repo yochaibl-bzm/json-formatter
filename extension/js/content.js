@@ -96,6 +96,7 @@ var CrudPanel = function(){
         panel = document.createElement('form');
         panel.className = 'crud-form';
         panel.onsubmit = prepareRequest;
+        panel.hidden = true;
 
         pathBox = document.createElement('input');
         pathBox.className = 'path-box';
