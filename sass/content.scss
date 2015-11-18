@@ -284,20 +284,20 @@ span {
     height: 600px;
     font-size:13px;
   }
+  .select-box select{
+    margin-left:5px;
+    margin-top:3px;
+    float:left;
+    background: transparent;
+    width: 90px;
+    padding: 5px 5px 5px 12px;
+    font-size: 16px;
+    line-height: 1;
+    border: 1px black solid;
+    border-radius: 5;
+    height: 34px;
+    -webkit-appearance: none;
+  }
 
 }
 
-.select-box select{
-  margin-left:5px;
-  margin-top:3px;
-  float:left;
-  background: transparent;
-  width: 90px;
-  padding: 5px 5px 5px 12px;
-  font-size: 16px;
-  line-height: 1;
-  border: 1px black solid;
-  border-radius: 5;
-  height: 34px;
-  -webkit-appearance: none;
-}
