@@ -92,11 +92,12 @@ var CrudPanel = function(){
     }
 
     function sendRequest(){
-        ajaxRequest(pathBox.value, methodBox.value, dataBox.value, function(status){
+        var url = pathBox.value;
+        ajaxRequest(url, methodBox.value, dataBox.value, function(status){
             contentManager.createNewPort();
             contentManager.initPort();
+            contentManager.setPageUrl(url);
             contentManager.postText(status.target.responseText);
-            console.log ('response', status.target.responseText);
         });
     }
 
@@ -203,7 +204,6 @@ var contentManager = (function() {
                     break ;
 
                 case 'FORMATTED' :
-                    console.log ('formatteddddd');
                     showFormatted(jfContent, msg[1], msg[2]);
                     // Insert HTML content
 
@@ -312,13 +312,6 @@ var contentManager = (function() {
         jfContent.innerHTML = html ;
 
         displayedFormattedJsonTime = Date.now() ;
-
-        // Log times
-        //console.log('DOM ready took '+ (domReadyTime - startTime) +'ms' ) ;
-        //console.log('Confirming as JSON took '+ (isJsonTime - domReadyTime) +'ms' ) ;
-        //console.log('Formatting & displaying JSON took '+ (displayedFormattedJsonTime - isJsonTime) +'ms' ) ;
-        // console.log('JSON detected and formatted in ' + ( displayedFormattedJsonTime - domReadyTime ) + ' ms') ;
-        // console.markTimeline('JSON formatted and displayed') ;
 
         // Export parsed JSON for easy access in console
         setTimeout(function () {
@@ -525,12 +518,16 @@ var contentManager = (function() {
         port = createPort();
     }
 
+    function setPageUrl(url){
+        history.pushState(url, url, url);
+    }
+
     initPort();
 
     return {
         createNewPort: createNewPort,
         postText: postText,
-        initPort: initPort
+        initPort: initPort,
+        setPageUrl: setPageUrl
     };
-
 })();
