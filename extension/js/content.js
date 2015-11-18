@@ -310,6 +310,7 @@ var contentManager = (function() {
 
     function showFormatted(jfContent, html, json){
         jfContent.innerHTML = html ;
+        pre.innerText = json;
 
         displayedFormattedJsonTime = Date.now() ;
 
