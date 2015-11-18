@@ -34,7 +34,7 @@
 /*global chrome, console */
 
 // Source: http://stackoverflow.com/questions/6990729/simple-ajax-form-using-javascript-no-jquery
-function ajaxPost (url, method, data, callback) {
+function ajaxRequest (url, method, data, callback) {
     var xhr = new XMLHttpRequest();
 
     xhr.open(method, url);
@@ -78,7 +78,6 @@ var TabManager = (function(items){
 
 var CrudPanel = function(){
     var dom = generateDom();
-    var isInitialized = false;
     var panel, pathBox, dataBox, methodBox, submitButton;
 
     function generateMethodsSelect(){
@@ -93,8 +92,7 @@ var CrudPanel = function(){
     }
 
     function sendRequest(){
-        ajaxPost(pathBox.value, methodBox.value, dataBox.value, function(status){
-            debugger;
+        ajaxRequest(pathBox.value, methodBox.value, dataBox.value, function(status){
             console.log ('response', status.target.responseText);
         });
     }
@@ -139,14 +137,9 @@ var CrudPanel = function(){
         return JSON.stringify(JSON.parse(json), null, '\t');
     }
 
-    function init(json, force){
-        if (isInitialized && !force){
-            return;
-        }
-
+    function init(json){
         pathBox.value = document.location.href;
         dataBox.value = prettify(json);
-        isInitialized = true;
     }
 
     return {
@@ -325,26 +318,8 @@ var crudPanel = CrudPanel();
           break ;
             
         case 'FORMATTED' :
+          showFormatted(jfContent, msg[1], msg[2]);
           // Insert HTML content
-            jfContent.innerHTML = msg[1] ;
-          
-          displayedFormattedJsonTime = Date.now() ;
-
-          // Log times
-            //console.log('DOM ready took '+ (domReadyTime - startTime) +'ms' ) ;
-            //console.log('Confirming as JSON took '+ (isJsonTime - domReadyTime) +'ms' ) ;
-            //console.log('Formatting & displaying JSON took '+ (displayedFormattedJsonTime - isJsonTime) +'ms' ) ;
-            // console.log('JSON detected and formatted in ' + ( displayedFormattedJsonTime - domReadyTime ) + ' ms') ;
-            // console.markTimeline('JSON formatted and displayed') ;
-
-          // Export parsed JSON for easy access in console
-            setTimeout(function () {
-              var script = document.createElement("script") ;
-              script.innerHTML = 'window.json = ' + msg[2] + ';' ;
-              document.head.appendChild(script) ;
-              crudPanel.init(msg[2]);
-              console.log('JSON Formatter: Type "json" to inspect.') ;
-            }, 100) ;
 
           break ;
         
@@ -354,6 +329,29 @@ var crudPanel = CrudPanel();
     });
   
     // console.timeEnd('established port') ;
+
+    function showFormatted(jfContent, html, json){
+        jfContent.innerHTML = html ;
+
+        displayedFormattedJsonTime = Date.now() ;
+
+        // Log times
+        //console.log('DOM ready took '+ (domReadyTime - startTime) +'ms' ) ;
+        //console.log('Confirming as JSON took '+ (isJsonTime - domReadyTime) +'ms' ) ;
+        //console.log('Formatting & displaying JSON took '+ (displayedFormattedJsonTime - isJsonTime) +'ms' ) ;
+        // console.log('JSON detected and formatted in ' + ( displayedFormattedJsonTime - domReadyTime ) + ' ms') ;
+        // console.markTimeline('JSON formatted and displayed') ;
+
+        // Export parsed JSON for easy access in console
+        setTimeout(function () {
+            var script = document.createElement("script") ;
+            script.innerHTML = 'window.json = ' + json + ';' ;
+            document.head.appendChild(script) ;
+            crudPanel.init(json);
+            console.log('JSON Formatter: Type "json" to inspect.') ;
+        }, 100) ;
+
+    }
 
   function isButtonSelected(button){
       return button.className.indexOf('selected') > -1;
