@@ -263,8 +263,7 @@ var contentManager = (function() {
                 button: buttonCrud
             }
         });
-        // tabManager.show('formatted');
-        tabManager.show('crud');
+        tabManager.show('formatted');
 
         buttonPlain.addEventListener(
             'click',

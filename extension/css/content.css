@@ -204,10 +204,20 @@ span {
 .crud-form {
   padding: 10px; }
   .crud-form .send-panel {
-    width: 1500px; }
+    width: 1500px;
+    float: left;
+    clear: both; }
     .crud-form .send-panel .submit-button, .crud-form .send-panel .path-box, .crud-form .send-panel .method-select {
-      font-size: 25px;
       float: left; }
+    .crud-form .send-panel .submit-button {
+      margin-top: 3px;
+      margin-left: 5px;
+      font-size: 20px;
+      line-height: 30px;
+      background-color: white;
+      border-radius: 7px;
+      height: 35px;
+      border: 1px black solid; }
     .crud-form .send-panel .path-box {
       height: 40px;
       width: 800px;
@@ -216,20 +226,24 @@ span {
       font-size: 16px; }
   .crud-form .data-box {
     border-radius: 7px;
-    display: block;
+    float: left;
+    clear: both;
     margin-top: 10px;
     width: 800px;
     height: 600px;
     font-size: 13px; }
 
-.select-box {
+.select-box select {
+  margin-left: 5px;
+  margin-top: 3px;
+  float: left;
   background: transparent;
-  width: 268px;
-  padding: 5px;
+  width: 90px;
+  padding: 5px 5px 5px 12px;
   font-size: 16px;
   line-height: 1;
-  border: 0;
-  border-radius: 0;
+  border: 1px black solid;
+  border-radius: 5;
   height: 34px;
   -webkit-appearance: none; }
 
