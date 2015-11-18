@@ -203,13 +203,17 @@ span {
 
 .crud-form {
   padding: 10px; }
-  .crud-form .path-box {
-    height: 40px;
-    width: 800px;
-    display: block;
-    border-radius: 7px;
-    padding-left: 8px;
-    font-size: 16px; }
+  .crud-form .send-panel {
+    width: 1500px; }
+    .crud-form .send-panel .submit-button, .crud-form .send-panel .path-box, .crud-form .send-panel .method-select {
+      font-size: 25px;
+      float: left; }
+    .crud-form .send-panel .path-box {
+      height: 40px;
+      width: 800px;
+      border-radius: 7px;
+      padding-left: 8px;
+      font-size: 16px; }
   .crud-form .data-box {
     border-radius: 7px;
     display: block;
@@ -217,5 +221,16 @@ span {
     width: 800px;
     height: 600px;
     font-size: 13px; }
+
+.select-box {
+  background: transparent;
+  width: 268px;
+  padding: 5px;
+  font-size: 16px;
+  line-height: 1;
+  border: 0;
+  border-radius: 0;
+  height: 34px;
+  -webkit-appearance: none; }
 
 /*# sourceMappingURL=content.css.map */

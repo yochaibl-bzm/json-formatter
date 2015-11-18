@@ -82,13 +82,18 @@ var CrudPanel = function(){
 
     function generateMethodsSelect(){
         var select = document.createElement('select');
+        var wrapperDiv = document.createElement('div');
+        wrapperDiv.className = 'select-box';
+        wrapperDiv.appendChild(select);
+
         select.className = 'method-select';
 
         ['POST', 'PUT', 'PATCH', 'DELETE'].forEach(function(method){
            select.appendChild(createOption(method));
         });
 
-        return select;
+        methodBox = select;
+        return wrapperDiv;
     }
 
     function sendRequest(){
@@ -119,17 +124,19 @@ var CrudPanel = function(){
         dataBox = document.createElement('textarea');
         dataBox.className = 'data-box';
 
-        methodBox = generateMethodsSelect();
-
         submitButton = document.createElement('button');
         submitButton.innerHTML = 'Send';
         submitButton.className = 'submit-button';
         submitButton.onclick = sendRequest;
 
-        panel.appendChild(pathBox);
+        var sendPanel = document.createElement('div');
+        sendPanel.className = 'send-panel';
+        sendPanel.appendChild(pathBox);
+        sendPanel.appendChild(generateMethodsSelect());
+        sendPanel.appendChild(submitButton);
+
+        panel.appendChild(sendPanel);
         panel.appendChild(dataBox);
-        panel.appendChild(methodBox);
-        panel.appendChild(submitButton);
         return panel;
     }
 
@@ -256,7 +263,8 @@ var contentManager = (function() {
                 button: buttonCrud
             }
         });
-        tabManager.show('formatted');
+        // tabManager.show('formatted');
+        tabManager.show('crud');
 
         buttonPlain.addEventListener(
             'click',

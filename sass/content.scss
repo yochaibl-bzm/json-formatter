@@ -246,13 +246,23 @@ span {
 .crud-form{
   padding:10px;
 
-  .path-box{
-    height:40px;
-    width: 800px;
-    display:block;
-    border-radius: 7px;
-    padding-left: 8px;
-    font-size:16px;
+  .send-panel{
+    width: 1500px;
+
+    .submit-button, .path-box, .method-select {
+      float:left;
+    }
+    .submit-button{
+      font-size:25px;
+    }
+
+    .path-box{
+      height:40px;
+      width: 800px;
+      border-radius: 7px;
+      padding-left: 8px;
+      font-size:16px;
+    }
   }
 
   .data-box{
@@ -263,4 +273,18 @@ span {
     height: 600px;
     font-size:13px;
   }
+
 }
+
+.select-box {
+  background: transparent;
+  width: 268px;
+  padding: 5px;
+  font-size: 16px;
+  line-height: 1;
+  border: 0;
+  border-radius: 0;
+  height: 34px;
+  -webkit-appearance: none;
+}
+
