@@ -65,22 +65,56 @@ var TabManager = (function(items){
 var CrudPanel = function(){
     var dom = generateDom();
     var isInitialized = false;
+    var panel, pathBox, dataBox, methodBox, submitButton;
+
+    function generateMethodsSelect(){
+        var select = document.createElement('select');
+        select.className = 'method-select';
+
+        ['POST', 'PUT', 'PATCH', 'DELETE'].forEach(function(method){
+           select.appendChild(createOption(method));
+        });
+
+        return select;
+    }
+
+    function prepareRequest(){
+        panel.action = pathBox.value;
+        panel.enctype = 'application/json';
+        panel.method = methodBox.value.toLowerCase();
+        panel.source = dataBox.value;
+    }
+
+    function createOption(method){
+        var option = document.createElement('option');
+        option.innerHTML = method;
+        option.value = method;
+        return option;
+    }
 
     function generateDom(){
-        var panel = document.createElement('form');
+        panel = document.createElement('form');
         panel.className = 'crud-form';
+        panel.onsubmit = prepareRequest;
 
-        var pathBox = document.createElement('input');
+        pathBox = document.createElement('input');
         pathBox.className = 'path-box';
 
-        var dataBox = document.createElement('textarea');
+        dataBox = document.createElement('textarea');
         dataBox.className = 'data-box';
 
-        var submitButton = document.createElement('submit');
+        methodBox = generateMethodsSelect();
+
+        submitButton = document.createElement('button');
+        // submitButton.type = 'submit';
+        submitButton.innerHTML = 'Send';
         submitButton.className = 'submit-button';
+        submitButton.onsubmit = prepareRequest;
+        submitButton.onclick = prepareRequest;
 
         panel.appendChild(pathBox);
         panel.appendChild(dataBox);
+        panel.appendChild(methodBox);
         panel.appendChild(submitButton);
         return panel;
     }
@@ -98,8 +132,8 @@ var CrudPanel = function(){
             return;
         }
 
-        document.getElementsByClassName('path-box')[0].value = document.location.href;
-        document.getElementsByClassName('data-box')[0].value = prettify(json);
+        pathBox.value = document.location.href;
+        dataBox.value = prettify(json);
         isInitialized = true;
     }
 
