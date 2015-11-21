@@ -115,6 +115,12 @@ var RulesChecker = function(rules, data){
     };
 };
 
+var rules;
+function loadRules(){
+    rules = $.parseJSON(localStorage['options'] || []);
+}
+loadRules();
+
 (function () {
   
   "use strict" ;
@@ -282,8 +288,6 @@ var RulesChecker = function(rules, data){
         t_commaText: document.createTextNode(','),
         t_dblqText: document.createTextNode('"')
       } ;
-
-    var rules = $.parseJSON(localStorage['options'] || []);
 
     function wrapLink(valueElement, keyPath, keyName, value, options){
         var link = options.rulesChecker.getLinkHref(keyPath, keyName, value);
@@ -600,3 +604,9 @@ var RulesChecker = function(rules, data){
       });
     });
 }()) ;
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.type === 'RELOAD-OPTIONS'){
+        loadRules();
+    }
+});

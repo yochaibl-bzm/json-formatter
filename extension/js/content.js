@@ -316,6 +316,7 @@ var contentManager = (function() {
     }
 
     function showFormatted(jfContent, html, json){
+        document.body.classList.add('json-formatter');
         jfContent.innerHTML = html ;
         pre.innerText = json;
 
